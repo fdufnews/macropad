@@ -1,9 +1,9 @@
 # MacroPad
 
 ## How it starts from
-As a left-hander, using keyboard shortcuts is usually problematic. Many of them have to use the left hand so I have to let go of the mouse, type the key combination, pick up the mouse again, or twist my fingers to type the key combination with the right hand.
-After some research on the Internet I found the following repo of a simple combination of hardware and software. 
-https://github.com/aarnas/pico-circuit-python/tree/main/Projects/DuckyMacroPad
+As a left-hander, using keyboard shortcuts is usually problematic. Many of them have to use the left hand so I have to let go of the mouse, type the key combination, pick up the mouse again, or twist my fingers to type the key combination with the right hand.  
+After some research on the Internet I found the [DuckyMacroPad](https://github.com/aarnas/pico-circuit-python/tree/main/Projects/DuckyMacroPad) of a simple combination of hardware and software. 
+
 I quickly tested it and found some limitations to what I wanted. So I forked the repository and started my own version of Macropad. Added support for a matrix keyboard and some keywords to make the scripts more versatile.
 
 ## Description of what I wanted
@@ -203,6 +203,7 @@ To make this mode active, the user shall plug in the Macropad while keeping the 
 
 It is boot.py that tests if the rotary encoder is pushed at power on and activate or not the USB drive.
 ## Directory tree
+Here is a picture of the directory tree on the CIRCUITPY disk.  
 ```text
 root
      |
@@ -232,4 +233,9 @@ root
      |\settings.toml
 ```
 
-
+## Todo
+### Easy
+- Add management of key colors in the settings.toml file
+### Difficult
+- Look if it is possible to use either of icons or text in the keys without exploding memory and making software slower (Difficult as it can be very memory hungry).
+- Search a way to place multi lines of text in the keys. This currently very boring to be limited to 5 caracters (difficult as it all depends on the buttons library).
