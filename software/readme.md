@@ -1,0 +1,3 @@
+- code_full is the software with all the comments  
+- stripcomments.sh is used to delete all the comments and generate a smaller file that is copied in pico_fs.  
+- The content of pico_fs can be uploaded as is on the board. It contains a copy of the readme.md file so the Macropad embeds its own documentation

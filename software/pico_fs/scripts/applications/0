@@ -1,0 +1,6 @@
+LABEL gedit
+ALT F2
+DELAY 200
+STRING gedit
+ENTER
+

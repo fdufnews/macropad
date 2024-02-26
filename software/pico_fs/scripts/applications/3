@@ -1,0 +1,6 @@
+LABEL Arduino
+ALT F2
+DELAY 200
+STRING /home/frederic/Tools/arduino-ide-v2/arduino-ide
+ENTER
+

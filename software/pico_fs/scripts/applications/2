@@ -1,0 +1,5 @@
+LABEL DOOIT
+ALT F2
+DELAY 200
+STRING gnome-terminal -- dooit
+ENTER

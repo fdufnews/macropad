@@ -1,0 +1,6 @@
+LABEL Brave
+ALT F2
+DELAY 200
+STRING brave-browser
+ENTER
+

@@ -1,0 +1,5 @@
+LABEL Keepass2
+ALT F2
+DELAY 200
+STRING keepass2
+ENTER
