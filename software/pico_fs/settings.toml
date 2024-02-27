@@ -1,2 +1,12 @@
 lang="FR"
 default="applications"
+font="orbitron_black14.pcf"
+style="ROUNDRECT"
+background="ORANGE"
+fill_color="WHITE"
+outline_color="GREEN"
+label_color="DARKBLUE"
+selected_fill="DARKGRAY"
+selected_outline="RED"
+selected_label="RED"
+

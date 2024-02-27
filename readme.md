@@ -188,13 +188,57 @@ A short push on the encoder pushbutton switches to the next layer. When reaching
 A long push switches the current language.
 
 ## Default configuration
-The *settings.toml* file at the root of the file system can be used to specify the default language and layer
-The syntaxe is the following
+The *settings.toml* file at the root of the file system can be used to specify the default language and layer.  
+Settings are key pairs. One key name followed by an equal sign followed by the value in double quotes.  
+Example  
 ```
-lang='FR'
-layer='applications'
+lang="FR"
+default="applications"
+font="orbitron_black14.pcf"
+style="ROUNDRECT"
+background="ORANGE"
+fill_color="0xffffff"
+outline_color="GREEN"
+label_color="DARKBLUE"
+selected_fill="DARKGRAY"
+selected_outline="RED"
+selected_label="RED"
 ```
-if the keys are missing the software default to the first language and the first layer in alphabetical order.
+
+| key | Comment |
+| :--- | :---|
+|lang |Language for the keyboard either of "FR" or "US" others can be added in code.py|
+|default |Layer opened by default, if missing the first layer, in alphabetical order, will be selected|
+|font |Font used to display the label, if missing terminalio.FONT will be used. Fonts are supposed to be in the fonts directory. Only the filename is necessary, not a full path|
+|style |Style of the buttons one of RECT, ROUNDRECT, SHADOWRECT, SHADOWROUNDRECT can not be used. If missing ROUNDRECT is used|
+|background |Color of the background of the display. see color after the table|
+|fill_color |Fill color of the buttons|
+|outline_color |Color of the outline of the buttons|
+|label_color |Color of the labels|
+|selected_fill |Fill color when button is selected|
+|selected_outline |Color of the outline of the buttons when selected|
+|selected_label |Color of the labels when buttons are selected|
+
+__color__: color can be a color name from the following list or an integer number either in decimal or in hexadecimal. Numbers shall be quoted too  
+There is list of predefined colors in the code.  
+BLACK = 0x000000  
+LIGHTORANGE = 0xFF8800  
+ORANGE = 0xe66100  
+BROWN = 0x3F2200  
+WHITE = 0xFFFFFF  
+GRAY = 0x888888  
+LIGHTGRAY = 0xdddddd  
+DARKGRAY = 0x5e5c64  
+LIGHTGREEN = 0x00FF44  
+GREEN = 0x289525  
+DARKGREEN = 0x19571d  
+RED = 0xFF0000  
+PURPLE = 0x9141ac  
+YELLOW = 0xf8e45c  
+LAVENDER = 0x99c1f1  
+BLUE = 0x1c71d8  
+DARKBLUE = 0x2e4480  
+LIGHTBLUE = 0x62a0ea  
 
 ## USB drive
 The Macropad can be viewed as an USB drive or not.  
@@ -235,7 +279,8 @@ root
 
 ## Todo
 ### Easy
-- Add management of key colors in the settings.toml file
+[x] Add management of key colors in the settings.toml file
+[] add a keyword for the script to switch the layer. Example, selecting Gedit in the *applications* layer launches Gedit and switches to *Edition* layer
 ### Difficult
-- Look if it is possible to use either of icons or text in the keys without exploding memory and making software slower (Difficult as it can be very memory hungry).
-- Search a way to place multi lines of text in the keys. This currently very boring to be limited to 5 caracters (difficult as it all depends on the buttons library).
+[] Look if it is possible to use either of icons or text in the keys without exploding memory and making software slower (Difficult as it can be very memory hungry).
+[] Search a way to place multi lines of text in the keys. It is very boring to be limited to 5 or 6 caracters (difficult as it all depends on the buttons library).

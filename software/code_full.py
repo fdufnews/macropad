@@ -27,7 +27,7 @@ except ImportError:
     from displayio import FourWire
 from adafruit_st7789 import ST7789
 
-version = '1.0'
+version = '1.1'
 
 tabLang = [['FR','US'],
             [KeyboardLayoutFR, KeyboardLayoutUS],
@@ -91,24 +91,51 @@ BUTTON_WIDTH = 64
 BUTTON_HEIGHT = 60
 BUTTON_MARGIN = 4
 STATUS_HEIGHT = 20
-BLACK = 0x0
-ORANGE = 0xFF8800
+
+# Some colors
+BLACK = 0x000000
+LIGHTORANGE = 0xFF8800
+ORANGE = 0xe66100
+BROWN = 0x3F2200
 WHITE = 0xFFFFFF
 GRAY = 0x888888
-GREEN = 0x00FF44
+LIGHTGRAY = 0xdddddd
+DARKGRAY = 0x5e5c64
+LIGHTGREEN = 0x00FF44
+GREEN = 0x289525
+DARKGREEN = 0x19571d
+RED = 0xFF0000
+PURPLE = 0x9141ac
+YELLOW = 0xf8e45c
+LAVENDER = 0x99c1f1
+BLUE = 0x1c71d8
+DARKBLUE = 0x2e4480
+LIGHTBLUE = 0x62a0ea
 
+style=Button.ROUNDRECT
+background=GRAY
+fill_col=WHITE
+outline_col=BLACK
+label_col=BLACK
+sel_fill=BLACK
+sel_outline=WHITE
+sel_label=WHITE
+
+font = terminalio.FONT
 
 def button_grid(row, col):
     return(BUTTON_MARGIN * (row + 1) + BUTTON_WIDTH * row,
         BUTTON_MARGIN * (col + 1) + BUTTON_HEIGHT * col)
 
-def add_button(col, row, label, width=1, color=WHITE, text_color=BLACK):
+def add_button(col, row, label, width, fill_color, outline_color, label_color, selected_fill, selected_outline, selected_label, style):
     pos = button_grid(row, col)
     new_button = Button(x = pos[0], y = pos[1],
                     width=BUTTON_WIDTH * width + BUTTON_MARGIN * (width - 1),
                     height = BUTTON_HEIGHT, label=label, label_font=font,
-                    label_color=text_color, fill_color=color,
-style=Button.ROUNDRECT)
+                    label_color=label_color, fill_color=fill_color,
+                    outline_color=outline_color, selected_fill=selected_fill,
+                    selected_outline=selected_outline, selected_label=selected_label,
+style=style)
     buttons.append(new_button)
     return new_button
     
@@ -350,19 +377,50 @@ def managePush():
     else:
         changeLayer(1)   
 
+def getDefaultStyle():
+    global font
+    global style
+    global background
+    global fill_col
+    global outline_col
+    global label_col
+    global sel_fill
+    global sel_outline
+    global sel_label
+
+    temp = os.getenv('font',None)
+    font = font if temp == None else eval("bitmap_font.load_font('/fonts/" + temp +"')")
+    temp = os.getenv('style',None)
+    style = style if temp == None else eval('Button.'+temp)
+    temp = os.getenv('background',None)
+    background = background if temp == None else eval(temp)
+    temp = os.getenv('fill_color',None)
+    fill_col = fill_col if temp == None else eval(temp)
+    temp = os.getenv('outline_color',None)
+    outline_col = outline_col if temp == None else eval(temp)
+    temp = os.getenv('label_color',None)
+    label_col = label_col if temp == None else eval(temp)
+    temp = os.getenv('selected_fill',None)
+    sel_fill = sel_fill if temp == None else eval(temp)
+    temp = os.getenv('selected_outline',None)
+    sel_outline = sel_outline if temp == None else eval(temp)
+    temp = os.getenv('selected_label',None)
+    sel_label = sel_label if temp == None else eval(temp)
+
 def getDefault():
     global language
     global langIndex
     global layer
     global layerIndex
-    
-    listLang('/scripts')
+
     language = os.getenv('lang',None)
+    layer = os.getenv('layer',None)
+
+    listLang('/scripts')
     if (language == None) or (not (language in tabLang[0])):
         language = tabLang[0][0]
     langIndex = tabLang[0].index(language)
     listLayer('/scripts/')
-    layer = os.getenv('layer',None)
     if (layer == None) or (not (layer in layerList)):
         layer = layerList[0]
     layerIndex = layerList.index(layer)
@@ -405,6 +463,9 @@ display_bus = FourWire(spi, command=tft_dc, chip_select=tft_cs, reset=tft_res, b
 
 display = ST7789(display_bus, width=280, height=240, rowstart=20, rotation=90)
 
+# scan scripts directory
+getDefaultStyle()
+
 
 # Make the display context
 root = displayio.Group()
@@ -413,27 +474,24 @@ display.root_group = root
 # Make a background color fill
 color_bitmap = displayio.Bitmap(280, 240, 1)
 color_palette = displayio.Palette(1)
-color_palette[0] = GRAY
+color_palette[0] = background
 bg_sprite = displayio.TileGrid(color_bitmap, pixel_shader=color_palette, x=0, y=0)
 root.append(bg_sprite)
 
-#font = bitmap_font.load_font('/fonts/FreeMonoBold14.pcf')
-#font = bitmap_font.load_font('/fonts/FreeMonoBold16.pcf')
-font = bitmap_font.load_font('/fonts/orbitron_black14.pcf')
 buttons = []
 
-add_button(0, 0, '0')
-add_button(0, 1, '1')
-add_button(0, 2, '2')
-add_button(0, 3, '3')
-add_button(1, 0, '4')
-add_button(1, 1, '5')
-add_button(1, 2, '6')
-add_button(1, 3, '7')
-add_button(2, 0, '8')
-add_button(2, 1, '9')
-add_button(2, 2, '10')
-add_button(2, 3, '11')
+add_button(0, 0, '0', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(0, 1, '1', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(0, 2, '2', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(0, 3, '3', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(1, 0, '4', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(1, 1, '5', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(1, 2, '6', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(1, 3, '7', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(2, 0, '8', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(2, 1, '9', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(2, 2, '10', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
+add_button(2, 3, '11', 1, fill_col, outline_col, label_col, sel_fill, sel_outline, sel_label, style)
 
 for b in buttons:
     root.append(b)
@@ -444,15 +502,15 @@ ystatus = 4 * BUTTON_MARGIN + 3 * BUTTON_HEIGHT
 stat_lang = Button(x = BUTTON_MARGIN, y = ystatus,
                     width = BUTTON_WIDTH,
                     height = STATUS_HEIGHT, label="FR", label_font=font,
-                    label_color=BLACK, fill_color=WHITE,
-style=Button.ROUNDRECT)
+                    label_color=label_col, fill_color=fill_col,outline_color=outline_col,
+style=style)
 root.append(stat_lang)
 
 stat_mode = Button(x = 2 * BUTTON_MARGIN + BUTTON_WIDTH, y = ystatus,
                     width =  2 * BUTTON_MARGIN + 3 * BUTTON_WIDTH,
                     height = STATUS_HEIGHT, label="Editor", label_font=font,
-                    label_color=BLACK, fill_color=WHITE,
-style=Button.ROUNDRECT)
+                    label_color=label_col, fill_color=fill_col,outline_color=outline_col,
+style=style)
 root.append(stat_mode)
 
 ystatus += STATUS_HEIGHT + BUTTON_MARGIN
@@ -460,15 +518,15 @@ ystatus += STATUS_HEIGHT + BUTTON_MARGIN
 but_ccw = Button(x = BUTTON_MARGIN, y = ystatus,
                     width = BUTTON_MARGIN + 2 * BUTTON_WIDTH,
                     height = STATUS_HEIGHT, label="<-- prev", label_font=font,
-                    label_color=BLACK, fill_color=WHITE,
-style=Button.ROUNDRECT)
+                    label_color=label_col, fill_color=fill_col,outline_color=outline_col,
+style=style)
 root.append(but_ccw)
 
 but_cw = Button(x =  3 * BUTTON_MARGIN + 2 * BUTTON_WIDTH, y = ystatus,
                     width = BUTTON_MARGIN + 2 * BUTTON_WIDTH,
                     height = STATUS_HEIGHT, label="next -->", label_font=font,
-                    label_color=BLACK, fill_color=WHITE,
-style=Button.ROUNDRECT)
+                    label_color=label_col, fill_color=fill_col,outline_color=outline_col,
+style=style)
 root.append(but_cw)
 
 # scan scripts directory
