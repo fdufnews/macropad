@@ -3,4 +3,4 @@ ALT F2
 DELAY 200
 STRING kicad
 ENTER
-
+LAYER kicad

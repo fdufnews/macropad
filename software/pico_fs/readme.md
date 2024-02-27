@@ -1,53 +1,13 @@
 # MacroPad
 
-## How it starts from
-As a left-hander, using keyboard shortcuts is usually problematic. Many of them have to use the left hand so I have to let go of the mouse, type the key combination, pick up the mouse again, or twist my fingers to type the key combination with the right hand.  
-After some research on the Internet I found the [DuckyMacroPad](https://github.com/aarnas/pico-circuit-python/tree/main/Projects/DuckyMacroPad) of a simple combination of hardware and software. 
-
-I quickly tested it and found some limitations to what I wanted. So I forked the repository and started my own version of Macropad. Added support for a matrix keyboard and some keywords to make the scripts more versatile.
-
-## Description of what I wanted
-- a macropad with between 9 and 12 keys (not too much keys as I wanted the keypad to stay atop my keyboard)
-- progammed in Python
-- no daemon on the computer
-- support of different keymaps (I have a desktop with a french keyboard and a laptop with a US keyboard).
-- programmable macros with support for some software and easy modification of them without a specific tool.
-
-## What I ended with
+## What it is
  A macropad with:
  
-- Raspberry Pi Pico, running CircuitPython (as CircuitPython supports USB HID and make the Pico be viewed as an externel disk)
+- a Raspberry Pi Pico, running CircuitPython (as CircuitPython supports USB HID and make the Pico be viewed as an externel disk)
 - 12 buttons, 9 seems a bit limited
 - 1 rotary encoder, this adds some pleasant tricks like undo/redo at the turn of a button
 - a 280 x 240 TFT color display, to show key affectation
 
-## Pin allocation on the Raspberry Pi Pico
-```
-|        |       |    |     ┏━━━━━┓     |    |          |          |
-|        |       |    |┏━━━━┫     ┣━━━━┓|    |          |          |
-|        | GP0   | 1  |┃◎   ┗━━━━━┛   ◎┃| 40 |VBUS      |          |
-|        | GP1   | 2  |┃◎ ▩           ◎┃| 39 |VSYS      |          |
-|        | Ground| 3  |┃▣ └─GP25      ▣┃| 38 |Ground    |          |
-| L1     | GP2   | 4  |┃◎  ▒▒▒        ◎┃| 37 |3v3 En    |          |
-| L2     | GP3   | 5  |┃◎  ▒▒▒        ◎┃| 36 |3v3 Out   |          |
-| L3     | GP4   | 6  |┃◎             ◎┃| 35 |ADC VRef  |          |
-| R1     | GP5   | 7  |┃◎             ◎┃| 34 |GP28 / A2 |          |
-|        | Ground| 8  |┃▣             ▣┃| 33 |ADC Ground|          |
-|        | GP6   | 9  |┃◎   ▓▓▓▓▓▓▓   ◎┃| 32 |GP27 / A1 |          |
-| ROT1A  | GP7   | 10 |┃◎   ▓▓▓▓▓▓▓   ◎┃| 31 |GP26 / A0 |          |
-| ROT1B  | GP8   | 11 |┃◎   ▓▓▓▓▓▓▓   ◎┃| 30 |run       |          |
-| ROT1S  | GP9   | 12 |┃◎   ▓▓▓▓▓▓▓   ◎┃| 29 |GP22      | TFT_BLK  |
-|        | Ground| 13 |┃▣             ▣┃| 28 |Ground    |          |
-| C1     | GP10  | 14 |┃◎             ◎┃| 27 |GP21      | TFT_CS   |
-| C2     | GP11  | 15 |┃◎             ◎┃| 26 |GP20      | TFT_MISO |
-| C3     | GP12  | 16 |┃◎             ◎┃| 25 |GP19      | NU       |
-| C4     | GP13  | 17 |┃◎             ◎┃| 24 |GP18      | TFT_SCK  |
-|        | Ground| 18 |┃▣             ▣┃| 23 |Ground    |          |
-| R2     | GP14  | 19 |┃◎             ◎┃| 22 |GP17      | TFT_CD   |
-| R3     | GP15  | 20 |┃◎    ◎ ▣ ◎    ◎┃| 21 |GP16      | TFT_RS   |
-|        |       |    |┗━━━━━━━━━━━━━━━┛|    |          |          |
-```
-R1-3 are reserved for future use. They are parts of the 2 connectors that are connecting the keyboard to the main board
 
 ## View of the Macropad
 ![](doc/IMG_20240226_132405_small.jpg)
@@ -85,10 +45,12 @@ In each layer, there is one file for each key. 12 keys + rotary encoder CW and C
 Scripts are using some keywords
 ### Keywords
 #### Currently supported keywords
-- `#` to add a comment. Ignored when playing the scripts
+- `#` some text 
+to add a comment.  
+Ignored when playing the scripts
 - LABEL xxxxxx  
 Define the label that is printed on the key. SHALL BE THE 1rst LINE OF THE SCRIPT.  
-Depending on the font's size, the label can be truncated if too long. The label can be displayed on 2 lines inserting a \n in the label but the first line is centered vertically so only half of the height of the key will be used to display,  
+Depending on the font's size, the label can be truncated if too long.  
 If no LABEL is found on the first line of the script, the label will be the key number.  
 Ignored when playing the scripts
 - DELAY xxxx  
@@ -107,6 +69,9 @@ Set the key selected or not, when selected the color is inverted. Can be used fo
 
 - FLAG_SET / FLAG_RESET xxxxx  
 Set/reset flag named xxxx. Will be used with IF statements
+
+- LAYER layerName  
+switch the layer to layerName if it exists. Beware that a layer name is a directory name and can be case sensitive on some OS.
 
 - IF / IF_NOT  xxxx  
 Test if flag xxxx is set or not
@@ -277,10 +242,3 @@ root
      |\settings.toml
 ```
 
-## Todo
-### Easy
-[x] Add management of key colors in the settings.toml file
-[] add a keyword for the script to switch the layer. Example, selecting Gedit in the *applications* layer launches Gedit and switches to *Edition* layer
-### Difficult
-[] Look if it is possible to use either of icons or text in the keys without exploding memory and making software slower (Difficult as it can be very memory hungry).
-[] Search a way to place multi lines of text in the keys. It is very boring to be limited to 5 or 6 caracters (difficult as it all depends on the buttons library).

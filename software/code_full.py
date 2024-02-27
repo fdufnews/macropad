@@ -27,7 +27,7 @@ except ImportError:
     from displayio import FourWire
 from adafruit_st7789 import ST7789
 
-version = '1.1'
+version = '1.2'
 
 tabLang = [['FR','US'],
             [KeyboardLayoutFR, KeyboardLayoutUS],
@@ -172,8 +172,6 @@ def sendString(line):
     layout.write(line)
 
 def switchKey(keynum, state):   
-    #add LED emulation on TFT display
-#    print("{0}-{1}".format(keynum,state))
     buttons[keynum].selected = True if state == 'KEY_SEL' else False
 
 def parseLine(filename, line):
@@ -183,6 +181,8 @@ def parseLine(filename, line):
     global in_else
     global wait_else_or_endif
     global wait_endif
+    global layerIndex
+    global layer
     
 # *******************************************************************
 # Added keywords
@@ -193,12 +193,17 @@ def parseLine(filename, line):
     elif(line[0:3] == "#"):
         # ignore script comments
         pass
+    elif(line[0:5] == "LAYER"):
+        param = line[5:].strip()
+        if param in layerList:
+            layer = param
+            layerIndex = layerList.index(param)
+            changeLayer(0)
     elif(line[0:6] == "IF_NOT"):
         flag = line[7:]
         # a flag missing in the dictonnary is considered False
         # maybe this will change later but it currently seems to be OK
         state = dico_flags.get(flag,False)
-        # print("IF_NOT {0} with state {1}".format(flag,state))
         if(not state):
             in_if = True
         else:
@@ -208,13 +213,11 @@ def parseLine(filename, line):
         # a flag missing in the dictonnary is considered False
         # maybe this will change later but it currently seems to be OK
         state = dico_flags.get(flag,False)
-        # print("IF {0} with state {1}".format(flag,state))
         if(state):
             in_if = True
         else:
             wait_else_or_endif = True
     elif(line[0:4] == "ELSE"):
-        # print("ELSE with in_if ={} and wait_else_or_endif={}".format(in_if,wait_else_or_endif))
         if( in_if):
             in_if = False
             wait_endif = True
@@ -225,7 +228,6 @@ def parseLine(filename, line):
 #            else:
 #                print("error ELSE without IF")
     elif(line[0:5] == "ENDIF"):
-        # print("ENDIF with in_if ={} and wait_else_or_endif={} and in_else={} and wait_endif={}".format(in_if,wait_else_or_endif,in_else,wait_endif))
         if(in_if or in_else or wait_endif or wait_else_or_endif):
             in_if = False
             in_else = False
@@ -249,11 +251,9 @@ def parseLine(filename, line):
             switchKey(int(filename), "KEY_UNSEL")
         elif(line[0:8] == "SET_FLAG"):
             arg = line[9:]
-            # print("SET_FLAG {}".format(arg))
             dico_flags[arg]=True
         elif(line[0:10] == "RESET_FLAG"):
             arg = line[11:]
-            # print("RESET_FLAG {}".format(arg))
             dico_flags[arg]=False
         else:
             newScriptLine = convertLine(line)
@@ -338,9 +338,6 @@ def changeLayer(inc):
     
     make_labels(scriptsLib)
     update_labels()
-#    print(language)
-#    print(layer)
-
 
 def changeLanguage():
     global langList

@@ -27,7 +27,7 @@ except ImportError:
     from displayio import FourWire
 from adafruit_st7789 import ST7789
 
-version = '1.1'
+version = '1.2'
 
 tabLang = [['FR','US'],
             [KeyboardLayoutFR, KeyboardLayoutUS],
@@ -164,11 +164,19 @@ def parseLine(filename, line):
     global in_else
     global wait_else_or_endif
     global wait_endif
+    global layerIndex
+    global layer
     
     if line[0:5] == "LABEL":
         pass
     elif(line[0:3] == "#"):
         pass
+    elif(line[0:5] == "LAYER"):
+        param = line[5:].strip()
+        if param in layerList:
+            layer = param
+            layerIndex = layerList.index(param)
+            changeLayer(0)
     elif(line[0:6] == "IF_NOT"):
         flag = line[7:]
         state = dico_flags.get(flag,False)
@@ -298,7 +306,6 @@ def changeLayer(inc):
     
     make_labels(scriptsLib)
     update_labels()
-
 
 def changeLanguage():
     global langList
